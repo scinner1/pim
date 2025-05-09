@@ -2,6 +2,7 @@
 <html lang="ka">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ცილინდრის და ლისტის კალკულატორი</title>
   <style>
     body {
@@ -60,6 +61,32 @@
     .method-container {
       text-align: center;
       margin-bottom: 20px;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #333;
+      line-height: 2.5;
+    }
+
+    footer strong {
+      font-weight: bold;
+    }
+
+    @media screen and (max-width: 768px) {
+      body {
+        max-width: 100%;
+        margin: 10px;
+        padding: 15px;
+      }
+      .diagram-row {
+        flex-direction: column;
+      }
+      .diagram {
+        margin-bottom: 20px;
+      }
     }
   </style>
 </head>
@@ -139,17 +166,24 @@
     </div>
   </div>
 
+  <footer>
+    <strong>© ელფოსტა:</strong> <a href="mailto:bobgiashvili@gmail.com">bobgiashvili@gmail.com</a><br>
+    <strong>წელი:</strong> <span id="year"></span>
+  </footer>
+
   <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    
     function showCylinderInputs() {
       document.getElementById('cylinderInputs').style.display = 'block';
       document.getElementById('listInputs').style.display = 'none';
-      document.getElementById('result').innerHTML = '';
+      document.getElementById('result').innerHTML = ''; // Clear result
     }
 
     function showListInputs() {
       document.getElementById('listInputs').style.display = 'block';
       document.getElementById('cylinderInputs').style.display = 'none';
-      document.getElementById('result').innerHTML = '';
+      document.getElementById('result').innerHTML = ''; // Clear result
     }
 
     function calculateCylinder() {
@@ -163,12 +197,12 @@
       }
 
       const pi = Math.PI;
-      const t = tMm / 1000;
-      const r = d / 2;
+      const t = tMm / 1000; // სიმძლავრე მმ-ში
+      const r = d / 2; // რადიუსი
       const c = pi * d;
-      const volume = pi * r * r * h;
-      const area = c * h;
-      const weight = area * t * 8000;
+      const volume = pi * Math.pow(r, 2) * h; // მოცულობა
+      const area = c * h; // ფართობი
+      const weight = area * t * 8000; // წონა
 
       document.getElementById('result').innerHTML =
         `𝑐 = π × 𝑑 = ${c.toFixed(3)} მ<br>` +
@@ -187,32 +221,25 @@
         return;
       }
 
-      const t = tMm / 1000;
-      const pi = Math.PI;
-      const diameter = listLength / pi;
-      const radius = diameter / 2;
-      const area = listLength * listHeight;
-      const volume = pi * radius * radius * listHeight;
-      const weight = area * t * 8000;
+      const t = tMm / 1000; // სისქე მმ-ში
+      const listArea = listLength * listHeight; // ლისტის ფართობი
+      const listWeight = listArea * t * 8000; // ლისტის წონა
+
+      // ცილინდრისთვის
+      const d = listLength / Math.PI; // დიამეტრი
+      const h = listHeight; // სიმაღლე
+      const cylinderVolume = Math.PI * Math.pow(d / 2, 2) * h;
+      const cylinderArea = Math.PI * d * h;
+      const cylinderWeight = cylinderArea * t * 8000;
 
       document.getElementById('result').innerHTML =
-        `წრეწირის სიგრძე 𝑐 = ${listLength.toFixed(3)} მ<br>` +
-        `ცილინდრის დიამეტრი 𝑑 = ${diameter.toFixed(3)} მ<br>` +
-        `მოცულობა V = ${volume.toFixed(3)} მ³<br>` +
-        `ფართობი A = ${area.toFixed(3)} მ²<br>` +
-        `წონა ≈ ${weight.toFixed(2)} კგ`;
+        `ლისტის ფართობი = სიგრძე × სიმაღლე = ${listArea.toFixed(3)} მ²<br>` +
+        `ლისტის წონა ≈ ${listWeight.toFixed(2)} კგ<br>` +
+        `ცილინდრის დიამეტრი ≈ ${d.toFixed(3)} მ<br>` +
+        `ცილინდრის მოცულობა ≈ ${cylinderVolume.toFixed(3)} მ³<br>` +
+        `ცილინდრის ფართობი ≈ ${cylinderArea.toFixed(3)} მ²<br>` +
+        `ცილინდრის წონა ≈ ${cylinderWeight.toFixed(2)} კგ`;
     }
   </script>
 </body>
 </html>
-  <footer style="margin-top: 40px; text-align: center; font-size: 14px; color: #333; line-height: 2.5;">
-    <strong>©</strong> bobgiashvili@gmail.com<br>
-    <strong></strong> <span id="year"></span>
-  </footer>
-
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
-</body>
-</html>
-
