@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <title>ცილინდრის და ლისტის კალკულატორი</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 480px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #fafafa;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      text-align: center;
+      font-size: 20px;
+    }
+    label {
+      margin-top: 10px;
+      display: block;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    input, button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+    #result {
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 15px;
+    }
+    .diagram-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      gap: 10px;
+    }
+    .diagram {
+      flex: 1;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 5px;
+    }
+    svg {
+      width: 100%;
+      height: auto;
+    }
+    .caption {
+      text-align: center;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+    .method-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>კალკულატორი</h1>
+
+  <div class="method-container">
+    <button onclick="showCylinderInputs()">ცილინდრის გამოთვლა</button>
+    <button onclick="showListInputs()">ლისტის გამოთვლა</button>
+  </div>
+
+  <!-- ცილინდრის ფორმა -->
+  <div id="cylinderInputs" style="display:none;">
+    <label>ცილინდრის დიამეტრი 𝑑 (მ):</label>
+    <input type="number" id="diameter" step="0.01" placeholder="მაგ: 0.9">
+
+    <label>ცილინდრის სიმაღლე ℎ (მ):</label>
+    <input type="number" id="height" step="0.01" placeholder="მაგ: 1.5">
+
+    <label>ლისტის სისქე (მმ):</label>
+    <input type="number" id="thickness" step="0.1" placeholder="მაგ: 1.5">
+
+    <button onclick="calculate()">გამოთვლა</button>
+  </div>
+
+  <!-- ლისტის ფორმა -->
+  <div id="listInputs" style="display:none;">
+    <label>ლისტის სიგრძე (მ):</label>
+    <input type="number" id="listLength" step="0.01" placeholder="მაგ: 1.0">
+
+    <label>ლისტის სიმაღლე (მ):</label>
+    <input type="number" id="listHeight" step="0.01" placeholder="მაგ: 0.15">
+
+    <label>ლისტის სისქე (მმ):</label>
+    <input type="number" id="thicknessList" step="0.1" placeholder="მაგ: 1.5">
+
+    <button onclick="calculate()">გამოთვლა</button>
+  </div>
+
+  <div id="result"></div>
+
+  <div class="diagram-row">
+    <!-- ცილინდრი -->
+    <div class="diagram">
+      <svg viewBox="0 0 200 240">
+        <ellipse cx="100" cy="40" rx="60" ry="15" fill="#ddd" stroke="#555"/>
+        <rect x="40" y="40" width="120" height="140" fill="rgba(255,0,0,0.1)" stroke="red"/>
+        <ellipse cx="100" cy="180" rx="60" ry="15" fill="#ddd" stroke="#555"/>
+        <line x1="170" y1="40" x2="170" y2="180" stroke="black" marker-end="url(#a)" />
+        <text x="175" y="110" font-size="14">ℎ</text>
+        <line x1="40" y1="30" x2="160" y2="30" stroke="black" marker-end="url(#a)" />
+        <text x="95" y="20" font-size="14">𝑑</text>
+        <defs>
+          <marker id="a" markerWidth="8" markerHeight="8" refX="0" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="black"/>
+          </marker>
+        </defs>
+      </svg>
+      <div class="caption">იზომეტრიული ცილინდრი</div>
+    </div>
+
+    <!-- გაშლილი -->
+    <div class="diagram">
+      <svg viewBox="0 0 200 150">
+        <rect x="30" y="30" width="140" height="80" fill="rgba(0,128,255,0.1)" stroke="blue"/>
+        <line x1="25" y1="30" x2="25" y2="110" stroke="black" marker-end="url(#b)" />
+        <text x="10" y="75" font-size="14">ℎ</text>
+        <line x1="30" y1="120" x2="170" y2="120" stroke="black" marker-end="url(#b)" />
+        <text x="60" y="140" font-size="13">𝑐 = π × 𝑑</text>
+        <defs>
+          <marker id="b" markerWidth="8" markerHeight="8" refX="0" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="black"/>
+          </marker>
+        </defs>
+      </svg>
+      <div class="caption">გაშლილი ლისტი</div>
+    </div>
+  </div>
+
+  <script>
+    function showCylinderInputs() {
+      document.getElementById('cylinderInputs').style.display = 'block';
+      document.getElementById('listInputs').style.display = 'none';
+      document.getElementById('result').innerHTML = ''; // Clear result
+    }
+
+    function showListInputs() {
+      document.getElementById('listInputs').style.display = 'block';
+      document.getElementById('cylinderInputs').style.display = 'none';
+      document.getElementById('result').innerHTML = ''; // Clear result
+    }
+
+    function calculate() {
+      let result = "";
+      let isCylinder = document.getElementById('diameter') && document.getElementById('height');  // Check if calculating cylinder
+
+      if (isCylinder) {
+        // ცილინდრის გამოთვლა
+        const d = parseFloat(document.getElementById('diameter').value);
+        const h = parseFloat(document.getElementById('height').value);
+        const tMm = parseFloat(document.getElementById('thickness').value);
+
+        if (isNaN(d) || isNaN(h) || isNaN(tMm)) {
+          result = "შეავსე ყველა ველი სწორად.";
+        } else {
+          const pi = Math.PI;
+          const t = tMm / 1000; // სისქე მმ-ში
+          const r = d / 2; // რადიუსი
+          const c = pi * d;
+          const volume = pi * Math.pow(r, 2) * h; // მოცულობა
+          const area = c * h; // ფართობი
+          const weight = area * t * 8000; // წონა
+
+          result = 
+            `𝑐 = π × 𝑑 = ${c.toFixed(3)} მ<br>` +
+            `ცილინდრის მოცულობა V = π × r² × ℎ = ${volume.toFixed(3)} მ³<br>` +
+            `ფართობი A = 𝑐 × ℎ = ${area.toFixed(3)} მ²<br>` +
+            `წონა ≈ ${weight.toFixed(2)} კგ`;
+        }
+      } else {
+        // ლისტის გამოთვლა
+        const listLength = parseFloat(document.getElementById('listLength').value);
+        const listHeight = parseFloat(document.getElementById('listHeight').value);
+        const tMm = parseFloat(document.getElementById('thicknessList').value);
+
+        if (isNaN(listLength) || isNaN(listHeight) || isNaN(tMm)) {
+          result = "შეავსე ყველა ველი სწორად.";
+        } else {
+          const t = tMm / 1000; // სისქე მმ-ში
+          const listArea = listLength * listHeight; // ლისტის ფართობი
+          const listWeight = listArea * t * 8000; // ლისტის წონა
+
+          result = 
+            `ლისტის ფართობი = სიგრძე × სიმაღლე = ${listArea.toFixed(3)} მ²<br>` +
+            `ლისტის წონა ≈ ${listWeight.toFixed(2)} კგ`;
+        }
+      }
+
+      document.getElementById('result').innerHTML = result;
+    }
+  </script>
+</body>
+</html>
